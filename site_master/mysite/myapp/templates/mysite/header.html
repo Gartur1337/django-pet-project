@@ -1,0 +1,16 @@
+{% block mainmenu %}
+<div class="header">
+        <ul class="mainmenu">
+                {% for link in menu %}
+                <li><a href="{% url link.url_name %}" class="menu-buttons">{{link.title}}</a></li>
+                {% endfor %}
+                {% if request.user.is_authenticated %}
+                        <li> {{user.username}} | <a href="{% url 'logout' %}"  class="menu-buttons">Выйти</a></li>
+                {% else %}
+                        <li><a href="{% url 'registration' %}"  class="menu-buttons">Регистрация</a> | <a href="{% url 'login' %}" class="menu-buttons">Войти</a></li>
+                {% endif %}
+        </ul>
+        <div class="header-colormask"></div>
+        <div class="clear"></div>
+</div>
+{% endblock mainmenu %}

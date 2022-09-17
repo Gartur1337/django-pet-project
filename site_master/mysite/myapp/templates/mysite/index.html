@@ -1,0 +1,18 @@
+{% extends 'mysite/base.html' %}
+
+{% block content %}
+<ul class="list-articles">
+	{% for post in posts %}
+	<li>
+		<p>Категория: {{post.cat}}</p>
+		<p>Дата щитпостинга: {{post.time_create|date:"d-m-Y H:i:s"}}</p>
+		<h2>{{post.title}}</h2>
+		{% autoescape on %}
+		{{post.content|linebreaks|truncatewords:55}}
+		{% endautoescape %}
+		<div class="clear"></div>
+		<p class="link-read-post"><a href="{{ post.get_absolute_url }}" class="post-link">Читать пост</a></p>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}
