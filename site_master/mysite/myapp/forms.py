@@ -1,3 +1,4 @@
+from cProfile import label
 from django import forms
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
@@ -16,7 +17,9 @@ class AddPostForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'text-input'}),
             'content': forms.Textarea(attrs={'class': 'post-text-area'}),
+            'author': forms.HiddenInput(attrs={'class': None})
         }
+
 
 class RegisterUserForm(UserCreationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput)

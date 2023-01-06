@@ -1,4 +1,3 @@
-from tabnanny import verbose
 from django.urls import reverse
 from django.db import models
 
@@ -7,6 +6,7 @@ from django.db import models
 
 class Post(models.Model):
     title = models.CharField(max_length=255, verbose_name="Заголовок")
+    author = models.CharField(max_length=50, blank=True, verbose_name="Автор поста")
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name="URL")
     content = models.TextField(blank=True, verbose_name="Содержание")
     time_create = models.DateTimeField(auto_now_add=True, verbose_name="Время создания")

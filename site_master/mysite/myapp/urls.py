@@ -15,9 +15,14 @@ Including another URLconf
 """
 from django.urls import path
 from .views import *
+from . import views
+# from django.views.decorators.cache import cache_page
+
 
 urlpatterns = [
     path('', Index.as_view(), name='home'),
+    path('api/v1/postlist', PostAPIView.as_view()),
+    path('api/v1/postlist/<int:pk>/', PostAPIView.as_view()),
     path('about/', about, name='about'),
     path('registrtion/', RegisterUser.as_view(), name='registration'),
     path('login/', LoginUser.as_view(), name='login'),

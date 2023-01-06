@@ -6,9 +6,10 @@
 	<li>
 		<p>Категория: {{post.cat}}</p>
 		<p>Дата щитпостинга: {{post.time_create|date:"d-m-Y H:i:s"}}</p>
+		<p>Автор поста: {{post.author}}</p>
 		<h2>{{post.title}}</h2>
 		{% autoescape on %}
-		{{post.content|linebreaks|truncatewords:55}}
+		{{post.content|linebreaks|truncatewords:40}}
 		{% endautoescape %}
 		<div class="clear"></div>
 		<p class="link-read-post"><a href="{{ post.get_absolute_url }}" class="post-link">Читать пост</a></p>

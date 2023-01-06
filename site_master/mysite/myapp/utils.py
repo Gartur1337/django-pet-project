@@ -18,5 +18,4 @@ class DataMixin:
         
         context['menu'] = user_menu
         context['cats'] = cats
-
         return context
