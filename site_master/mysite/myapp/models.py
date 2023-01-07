@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.db import models
-
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 
@@ -17,6 +17,10 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
 
@@ -32,9 +36,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)
+
     def get_absolute_url(self):
         return reverse('category', kwargs={'cat_slug': self.slug})
-    
+
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"

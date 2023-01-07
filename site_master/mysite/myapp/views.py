@@ -13,11 +13,15 @@ from .serializers import PostSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.forms import model_to_dict
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 # Create your views here.
 
 from .models import *
 from .forms import *
 from .utils import *
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 
 
 class Index(DataMixin, ListView):
@@ -123,52 +127,98 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
-class PostAPIView(APIView):
-    def get(self, request):
-        lst = Post.objects.all()
-        return Response({'Posts': PostSerializer(lst, many=True).data})
-    
-    def post(self, request):
-        serializer = PostSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+# class PostViewSet(viewsets.ModelViewSet):
+#     # queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
-
-        post_new = Post.objects.create(
-            title=request.data['title'],
-            author=request.data['author'],
-            content=request.data['content'],
-            cat_id=request.data['cat_id']
-        )
-
-    def put(self, request, *arg, **kwargs):
-        pk = kwargs.get("pk", None)
-        if not pk:
-            return Response({"error": "Method PUT not allowed"})
+#     def get_queryset(self):
+#         pk = self.kwargs.get("pk")
+#         if not pk:
+#           return Post.objects.all()
         
-        try:
-            instance = Post.objects.get(pk=pk)
-        except:
-            return Response({"error": "Object does not exists"})
+#         return Post.objects.filter(pk=pk)
 
-        serializer = PostSerializer(data=request.data, instance=instance)
-        serializer.is_valid(raise_exception=True)
-        serializer.save() 
-        
-        return Response({"post": serializer.data})
+    # @action(methods=['get'], detail=True)
+    # def category(self, request, pk=None):
+    #     cats = Category.objects.get(pk=pk)
+    #     return Response({'categories': cats.name})
 
 
-    def delete(self, request, *arg, **kwargs):
-        pk = kwargs.get("pk", None)
-        if not pk:
-            return Response({"error": "Method DELETE not allowed"})
+class PostAPIList(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+class PostAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsOwnerOrReadOnly, IsAdminOrReadOnly)
+
+class PostAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+# class PostAPIView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         pk = kwargs.get("pk")
+#         lst = Post.objects.all()
+            
+#         if not pk:
+#             return Response({'Posts': PostSerializer(lst, many=True).data})
+
+#         try:
+#             instance = Post.objects.get(pk=pk)
+#         except:
+#             return Response({"error": "Object does not exists"})  
         
-        try:
-            instance = Post.objects.get(pk=pk)
-        except:
-            return Response({"error": "Object does not exists"})
+#         serializer = PostSerializer(data=request.data, instance=instance)
+#         return Response({"post": serializer.data})
+
+#     # @action(methods=['get'], detail=True)
+#     # def category(self, request, pk=None):
+#     #     cats = Category.objects.get(pk=pk)
+#     #     return Response({'categories': cats.name})
+
+#     def post(self, request):
+#         serializer = PostSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         post_new = Post.objects.create(
+#             title=request.data['title'],
+#             author=request.data['author'],
+#             content=request.data['content'],
+#             cat_id=request.data['cat_id']
+#         )
+
+#     def put(self, request, *arg, **kwargs):
+#         pk = kwargs.get("pk", None)
+#         if not pk:
+#             return Response({"error": "Method PUT not allowed"})
         
-        if instance:
-            instance.delete()
-            return Response({"post": "delete post " + str(pk)})
-        else:
-            return Response({"error": "Object does not exists"})
+#         try:
+#             instance = Post.objects.get(pk=pk)
+#         except:
+#             return Response({"error": "Object does not exists"})
+
+#         serializer = PostSerializer(data=request.data, instance=instance)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save() 
+        
+#         return Response({"post": serializer.data})
+
+#     def delete(self, request, *arg, **kwargs):
+#         pk = kwargs.get("pk", None)
+#         if not pk:
+#             return Response({"error": "Method DELETE not allowed"})
+        
+#         try:
+#             instance = Post.objects.get(pk=pk)
+#         except:
+#             return Response({"error": "Object does not exists"})
+        
+#         if instance:
+#             instance.delete()
+#             return Response({"post": "delete post " + str(pk)})
+#         else:
+#             return Response({"error": "Object does not exists"})

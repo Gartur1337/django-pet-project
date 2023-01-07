@@ -13,16 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+from django.urls import path, include, re_path
 from .views import *
 from . import views
+from rest_framework import routers
 # from django.views.decorators.cache import cache_page
 
+# router = routers.SimpleRouter()
+# router.register(r'postlist', PostViewSet, basename='Post')
 
 urlpatterns = [
     path('', Index.as_view(), name='home'),
-    path('api/v1/postlist', PostAPIView.as_view()),
-    path('api/v1/postlist/<int:pk>/', PostAPIView.as_view()),
+    # path('api/v1/', include(router.urls)),
+    # path('api/v1/postlist/', PostAPIView.as_view()),
+    # path('api/v1/postlist/<int:pk>/', PostAPIView.as_view()),
+    path('api/v1/drf-auth/', include('rest_framework.urls')),
+    path('api/v1/post/', PostAPIList.as_view()),
+    path('api/v1/post/<int:pk>/', PostAPIUpdate.as_view()),
+    path('api/v1/postdelete/<int:pk>/', PostAPIDestroy.as_view()),
+    path('api/v1/auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('about/', about, name='about'),
     path('registrtion/', RegisterUser.as_view(), name='registration'),
     path('login/', LoginUser.as_view(), name='login'),
