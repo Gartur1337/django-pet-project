@@ -19,18 +19,13 @@ from . import views
 from rest_framework import routers
 # from django.views.decorators.cache import cache_page
 
-# router = routers.SimpleRouter()
-# router.register(r'postlist', PostViewSet, basename='Post')
+router = routers.SimpleRouter()
+router.register(r'postlist', PostViewSet, basename='Post')
 
 urlpatterns = [
     path('', Index.as_view(), name='home'),
-    # path('api/v1/', include(router.urls)),
-    # path('api/v1/postlist/', PostAPIView.as_view()),
-    # path('api/v1/postlist/<int:pk>/', PostAPIView.as_view()),
+    path('api/v1/', include(router.urls)),
     path('api/v1/drf-auth/', include('rest_framework.urls')),
-    path('api/v1/post/', PostAPIList.as_view()),
-    path('api/v1/post/<int:pk>/', PostAPIUpdate.as_view()),
-    path('api/v1/postdelete/<int:pk>/', PostAPIDestroy.as_view()),
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('about/', about, name='about'),
@@ -40,4 +35,9 @@ urlpatterns = [
     path('addpost/', AddPost.as_view(), name='add_post'),
     path('post/<slug:post_slug>/', ShowPost.as_view(), name='post'),
     path('category/<slug:cat_slug>/', PostCategory.as_view(), name='category'),
+    # path('api/v1/postlist/', PostViewSet.as_view()),
+    # path('api/v1/postlist/<int:pk>/', PostViewSet.as_view()),
+    # path('api/v1/post/', PostAPIView.as_view()),
+    # path('api/v1/post/<int:pk>/', PostAPIUViewUpdate.as_view()),
+    # path('api/v1/postdelete/<int:pk>/', PostAPIUViewDestroy.as_view()),
 ]

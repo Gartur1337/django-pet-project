@@ -14,8 +14,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.forms import model_to_dict
 from rest_framework import viewsets
+from rest_framework import mixins
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAdminUser
 # Create your views here.
 
 from .models import *
@@ -122,42 +123,26 @@ class LoginUser(DataMixin, LoginView):
     def get_success_url(self):
         return reverse_lazy('home')
 
-
 def logout_user(request):
     logout(request)
     return redirect('login')
 
-# class PostViewSet(viewsets.ModelViewSet):
-#     # queryset = Post.objects.all()
-#     serializer_class = PostSerializer
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsOwnerOrReadOnly|IsAdminUser, )
 
-#     def get_queryset(self):
-#         pk = self.kwargs.get("pk")
-#         if not pk:
-#           return Post.objects.all()
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        if not pk:
+          return Post.objects.all()
         
-#         return Post.objects.filter(pk=pk)
+        return Post.objects.filter(pk=pk)
 
-    # @action(methods=['get'], detail=True)
-    # def category(self, request, pk=None):
-    #     cats = Category.objects.get(pk=pk)
-    #     return Response({'categories': cats.name})
-
-
-class PostAPIList(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, )
-
-class PostAPIUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsOwnerOrReadOnly, IsAdminOrReadOnly)
-
-class PostAPIDestroy(generics.RetrieveDestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    @action(methods=['get'], detail=True)
+    def category(self, request, pk=None):
+        cats = Category.objects.get(pk=pk)
+        return Response({'categories': cats.name})
 
 # class PostAPIView(APIView):
 #     def get(self, request, *args, **kwargs):
@@ -175,21 +160,32 @@ class PostAPIDestroy(generics.RetrieveDestroyAPIView):
 #         serializer = PostSerializer(data=request.data, instance=instance)
 #         return Response({"post": serializer.data})
 
-#     # @action(methods=['get'], detail=True)
-#     # def category(self, request, pk=None):
-#     #     cats = Category.objects.get(pk=pk)
-#     #     return Response({'categories': cats.name})
-
 #     def post(self, request):
 #         serializer = PostSerializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
+#         serializer.save() 
 
-#         post_new = Post.objects.create(
-#             title=request.data['title'],
-#             author=request.data['author'],
-#             content=request.data['content'],
-#             cat_id=request.data['cat_id']
-#         )
+#         return Response({'post': serializer.data})
+
+# class PostAPIUViewUpdate(APIView):
+
+#     def get(self, request, *arg, **kwargs):
+#         pk = kwargs.get("pk", None)
+#         if not pk:
+#             return Response({"error": "Method PUT not allowed"})
+
+#         try:
+#             instance = Post.objects.get(pk=pk)
+#         except:
+#             return Response({"error": "Object does not exists"})
+        
+#         return Response({'title': instance.title, 
+#                         'author': instance.author, 
+#                         'content': instance.content,
+#                         'time_create': instance.time_create,
+#                         'time_update': instance.time_update,
+#                         'is_published': instance.is_published,
+#                         'cat': str(instance.cat) })
 
 #     def put(self, request, *arg, **kwargs):
 #         pk = kwargs.get("pk", None)
@@ -205,7 +201,27 @@ class PostAPIDestroy(generics.RetrieveDestroyAPIView):
 #         serializer.is_valid(raise_exception=True)
 #         serializer.save() 
         
-#         return Response({"post": serializer.data})
+#         return Response({'post': serializer.data})
+
+# class PostAPIUViewDestroy(APIView):
+
+#     def get(self, request, *arg, **kwargs):
+#         pk = kwargs.get("pk", None)
+#         if not pk:
+#             return Response({"error": "Method PUT not allowed"})
+
+#         try:
+#             instance = Post.objects.get(pk=pk)
+#         except:
+#             return Response({"error": "Object does not exists"})
+            
+#         return Response({'title': instance.title, 
+#                         'author': instance.author, 
+#                         'content': instance.content,
+#                         'time_create': instance.time_create,
+#                         'time_update': instance.time_update,
+#                         'is_published': instance.is_published,
+#                         'cat': str(instance.cat) })
 
 #     def delete(self, request, *arg, **kwargs):
 #         pk = kwargs.get("pk", None)
