@@ -20,7 +20,7 @@ from rest_framework import routers
 # from django.views.decorators.cache import cache_page
 
 router = routers.SimpleRouter()
-router.register(r'postlist', PostViewSet, basename='Post')
+router.register(r'post', PostViewSet, basename='Post')
 
 urlpatterns = [
     path('', Index.as_view(), name='home'),

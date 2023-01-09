@@ -4,7 +4,8 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm 
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user
 from django.views import View
@@ -17,6 +18,7 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
+from django.shortcuts import render
 # Create your views here.
 
 from .models import *
@@ -57,7 +59,7 @@ class AddPost(LoginRequiredMixin, DataMixin, CreateView):
     def form_valid(self, form):
         form = AddPostForm(self.request.POST)
         new_post = form.save(commit=False)
-        new_post.author = get_user(self.request)
+        new_post.user = get_user(self.request)
         new_post.save()
         return redirect('home')
 

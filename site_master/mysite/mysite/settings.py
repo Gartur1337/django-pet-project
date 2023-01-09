@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'debug_toolbar',
     'myapp.apps.MyappConfig',
     'rest_framework',
@@ -128,7 +129,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT =  os.path.join(BASE_DIR, 'static')
-STATICFILE_DIRS = []
+STATICFILE_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -139,6 +140,9 @@ INTERNAL_IPS = [
     "127.0.0.1",
 
 ]
+
+
+CRISPY_TEMPLATE_PACK="bootstrap4"
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',

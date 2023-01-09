@@ -1,16 +1,30 @@
 {% block mainmenu %}
-<div class="header">
-        <ul class="mainmenu">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% for link in menu %}
-                <li><a href="{% url link.url_name %}" class="menu-buttons">{{link.title}}</a></li>
+                <li><a href="{% url link.url_name %}" class="nav-link">{{link.title}}</a></li>
                 {% endfor %}
                 {% if request.user.is_authenticated %}
-                        <li> {{user.username}} | <a href="{% url 'logout' %}"  class="menu-buttons">Выйти</a></li>
+                        <li class="nav-link disabled"> Пользователь: {{user.username}}</li>
+                        <li><a href="{% url 'logout' %}"  class="nav-link">Выйти</a></li>
                 {% else %}
-                        <li><a href="{% url 'registration' %}"  class="menu-buttons">Регистрация</a> | <a href="{% url 'login' %}" class="menu-buttons">Войти</a></li>
+                        <li><a href="{% url 'registration' %}"  class="nav-link">Регистрация</a></li>
+
+                        <li><a href="{% url 'login' %}" class="nav-link">Войти</a></li>
                 {% endif %}
-        </ul>
-        <div class="header-colormask"></div>
-        <div class="clear"></div>
-</div>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Поиск</button>
+            </form>
+           </div>
+        </div>
+</nav>
 {% endblock mainmenu %}

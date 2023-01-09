@@ -6,7 +6,7 @@
 	<li>
 		<p>Категория: {{post.cat}}</p>
 		<p>Дата щитпостинга: {{post.time_create|date:"d-m-Y H:i:s"}}</p>
-		<p>Автор поста: {{post.author}}</p>
+		<p>Автор поста: {{post.user}}</p>
 		<h2>{{post.title}}</h2>
 		{% autoescape on %}
 		{{post.content|linebreaks|truncatewords:40}}

@@ -1,12 +1,12 @@
-{% extends 'mysite/base.html' %}
+{% extends "mysite/base.html" %}
+
+{% block title %}Create an Account{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-{% for f in form %}
-<p><label for="{{ f.id_for_label }}">{{f.label}}:</label>{{ f }}</p>
-<div>{{f.errors}}</div>
-{% endfor %}
-    <button type="submit">Регистрация</button>
-</form>
+    <form method="POST" class="form-group">
+	{% csrf_token %}
+	{{ form|crispy }}
+	<button type="submit" class="btn btn-success">Register</button>
+    </form>
 {% endblock %}

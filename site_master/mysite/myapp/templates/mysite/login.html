@@ -1,16 +1,11 @@
 {% extends 'mysite/base.html' %}
 
-
+{% load crispy_forms_tags %}
 {% block content %}
 <form method="post">
     {% csrf_token %}
-
     <div>{{ form.non_field_errors }}</div>
-    
-    {% for f in form %}
-        <p><label for="{{ f.id_for_label }}">{{ f.label }}:</label>{{ f }}</p>
-        <div>{{ f.errors }}</div>
-    {% endfor %}
-    <button type="submit">Войти</button>
+    {{form|crispy}}
+    <button type="submit" class="btn btn-success">Войти</button>
 </form>
 {% endblock %}
