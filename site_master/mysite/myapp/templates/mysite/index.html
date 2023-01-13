@@ -9,7 +9,7 @@
 		<p>Автор поста: {{post.user}}</p>
 		<h2>{{post.title}}</h2>
 		{% autoescape on %}
-		{{post.content|linebreaks|truncatewords:40}}
+		{{post.content|linebreaks|truncatewords:100}}
 		{% endautoescape %}
 		<div class="clear"></div>
 		<p class="link-read-post"><a href="{{ post.get_absolute_url }}" class="post-link">Читать пост</a></p>

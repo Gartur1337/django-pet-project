@@ -7,7 +7,7 @@
     <h1>{{post.title}}</h1>
     <li>Категория: {{post.cat}}</li>
     <li>Дата щитпостинга: {{post.time_create|date:"d-m-Y H:i:s"}}</li>
-    <li>Автор поста: {{post.user.username}}</li>
+    <li>Автор поста: {{post.user}}</li>
     {{post.content|linebreaks}}
 
 </div>

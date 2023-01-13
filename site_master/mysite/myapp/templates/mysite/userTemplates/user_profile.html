@@ -1,0 +1,29 @@
+{% extends 'mysite/base.html' %}
+
+{% block content %}
+  <div>
+    {% if user.profile.profile_pic %}
+      <img src="{{ profile.profile_pic.url }}" height=100 width=100><br><br>
+    {% else %}
+      
+    {% endif %}
+      <p><strong>Username:</strong> {{ userprofile.user }}</p><br><br>
+      <p><strong>Bio:</strong> {{ userprofile.bio }}</p><br><br>
+      {% if userprofile.twitter %}
+      <p><strong>Twitter:</strong> {{ profile.twitter }}</p><br><br>
+      {% endif %}
+      {% if userprofile.instagram %}
+      <p><strong>Instagram:</strong> {{ userprofile.instagram }}</p><br><br>
+      {% endif %}
+      {% if userprofile.vk %}
+      <p><strong>Вконтакте:</strong> {{ userprofile.vk }}</p><br><br>
+      {% endif %}
+
+      {% if userprofile.user %}
+        <div>
+        {% csrf_token %}
+        </div>
+      {% endif %}
+    </div>
+
+{% endblock %}

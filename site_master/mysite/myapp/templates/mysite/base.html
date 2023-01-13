@@ -39,46 +39,18 @@
               </li>
               <li class="border-top my-3"></li>
               <li class="mb-1">
-                <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
-                  Account
-                </button>
-                <div class="collapse" id="account-collapse">
-                  <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    {% if request.user.is_authenticated %}
-                        <li class="nav-link disabled"> Пользователь: {{user.username}}</li>
-                        <li><a href="{% url 'logout' %}"  class="link-dark rounded">Выйти</a></li>
-                    {% else %}
-                        <li><a href="{% url 'registration' %}"  class="link-dark rounded">Регистрация</a></li>
-
-                        <li><a href="{% url 'login' %}" class="link-dark rounded">Войти</a></li>
-                    {% endif %}
-                  </ul>
-                </div>
               </li>
             </ul>
           </div>
-    
-        <!-- <div class="wrapper">
-            <div id="sidebar">
-                <div id="nav">
-                    <ul class="sticky-nav">
-                        {% if cat_selected == 0 %}
-                            <li>Все посты</li>
-                        {% else %}
-                            <a href="{% url 'home' %}" class="sidebar-links"><li>Все посты</li></a>
-                        {% endif %}
-                        {% show_categories %}
-                    </ul>
-                </div>
-            </div>
-        </div> -->
         <div class="content">
             {% block content %}
             {% endblock content %}
         </div>
     </main>
     {% include 'mysite/footer.html' %}
-
+    <script src="static/mysite/bootstrap/js/bootstrap.bundle.min.js" 
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+    crossorigin="anonymous"></script>
+    <script src="sidebars.js"></script>
 </body>
-
 </html>

@@ -35,3 +35,8 @@ class RegisterUserForm(UserCreationForm):
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label='Логин', widget=forms.TextInput)
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+
+class CreateProfilePageForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['profile_pic', 'bio', 'vk', 'instagram']

@@ -1,9 +1,10 @@
-from .models import *
+from myapp.models import *
 
 
 menu = [{'title': "Добавить статью", 'url_name': 'add_post'},
         {'title': "О Сайте", 'url_name': 'about'},
         {'title': "Главная", 'url_name': 'home'},
+        {'title': "Создать профиль", 'url_name': 'create_user_profile'},
 ]
 
 class DataMixin:

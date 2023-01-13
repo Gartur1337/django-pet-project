@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 
-from mysite import settings
+from config import settings
 from myapp.views import *
 from django.urls import include, path
 
@@ -24,6 +24,7 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.urls')),
+    path('',include('api.urls'))
 ]
 
 

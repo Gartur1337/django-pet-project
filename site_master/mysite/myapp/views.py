@@ -1,30 +1,18 @@
 from django.views.generic import ListView, CreateView, DetailView
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import  HttpResponseNotFound
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm 
+from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user
-from django.views import View
-from rest_framework import generics
-from .serializers import PostSerializer
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.forms import model_to_dict
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
 from django.shortcuts import render
 # Create your views here.
 
 from .models import *
 from .forms import *
 from .utils import *
-from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 
 
 class Index(DataMixin, ListView):
@@ -38,18 +26,49 @@ class Index(DataMixin, ListView):
         c_def = self.get_user_context(title="Главная страница")
         return dict(list(context.items()) + list(c_def.items()))
 
-    def get_queryset(self):
-        return Post.objects.filter(is_published=True).select_related('cat')
+    # def get_queryset(self):
+    #     return Post.objects.filter(is_published=True).select_related('cat').select_related('user')
+
+    def get_queryset(self, **kwargs):
+        return Post.objects.filter(is_published=True).select_related(**kwargs)
 
 
 def about(request):
     return render(request, 'mysite/about.html', {'menu': menu, 'title': 'О Сайте'})
 
+class CreateProfilePageView(DataMixin, CreateView):
+    form_class = CreateProfilePageForm
+    template_name = 'mysite/userTemplates/create_profile.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(CreateProfilePageView, self).get_context_data(*args, **kwargs)
+        c_def = self.get_user_context(title="Создание профиля")
+        return dict(list(context.items()) + list(c_def.items()))
+
+    success_url = reverse_lazy('home')
+
+
+class ShowProfilePageView(DataMixin, DetailView):
+    model = UserProfile
+    template_name = 'mysite/userTemplates/user_profile.html'
+
+    def get_context_data(self, *args, **kwargs):
+
+        context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
+        page_user = get_object_or_404(UserProfile, id=self.kwargs['pk'])
+        c_def = self.get_user_context(title="Профиль пользователя")
+        context['page_user'] = page_user
+        return dict(list(context.items()) + list(c_def.items()))
+
 
 class AddPost(LoginRequiredMixin, DataMixin, CreateView):
 
     form_class = AddPostForm
-    template_name = 'mysite/addpost.html'
+    template_name = 'mysite/postTemplates/addpost.html'
 
     def get_context_data(self,*, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,11 +82,10 @@ class AddPost(LoginRequiredMixin, DataMixin, CreateView):
         new_post.save()
         return redirect('home')
 
-
 class ShowPost(DataMixin, DetailView):
 
     model = Post
-    template_name = 'mysite/post.html'
+    template_name = 'mysite/postTemplates/post.html'
     slug_url_kwarg = 'post_slug'
     context_object_name = 'post'
 
@@ -75,7 +93,9 @@ class ShowPost(DataMixin, DetailView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title=context['post'])
         return dict(list(context.items()) + list(c_def.items()))
-
+    
+    def get_queryset(self):
+        return Post.objects.filter(is_published=True).select_related('user')
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
@@ -99,7 +119,7 @@ class PostCategory(DataMixin, ListView):
 class RegisterUser(DataMixin, CreateView):
 
     form_class = RegisterUserForm
-    template_name = 'mysite/register.html'
+    template_name = 'mysite/userTemplates/register.html'
     success_url = reverse_lazy('login')
 
     def get_context_data(self,*, object_list=None, **kwargs):
@@ -115,7 +135,7 @@ class RegisterUser(DataMixin, CreateView):
 
 class LoginUser(DataMixin, LoginView):
     form_class = LoginUserForm
-    template_name = 'mysite/login.html'
+    template_name = 'mysite/userTemplates/login.html'
 
     def get_context_data(self,*, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,115 +148,3 @@ class LoginUser(DataMixin, LoginView):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsOwnerOrReadOnly|IsAdminUser, )
-
-    def get_queryset(self):
-        pk = self.kwargs.get("pk")
-        if not pk:
-          return Post.objects.all()
-        
-        return Post.objects.filter(pk=pk)
-
-    @action(methods=['get'], detail=True)
-    def category(self, request, pk=None):
-        cats = Category.objects.get(pk=pk)
-        return Response({'categories': cats.name})
-
-# class PostAPIView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         pk = kwargs.get("pk")
-#         lst = Post.objects.all()
-            
-#         if not pk:
-#             return Response({'Posts': PostSerializer(lst, many=True).data})
-
-#         try:
-#             instance = Post.objects.get(pk=pk)
-#         except:
-#             return Response({"error": "Object does not exists"})  
-        
-#         serializer = PostSerializer(data=request.data, instance=instance)
-#         return Response({"post": serializer.data})
-
-#     def post(self, request):
-#         serializer = PostSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save() 
-
-#         return Response({'post': serializer.data})
-
-# class PostAPIUViewUpdate(APIView):
-
-#     def get(self, request, *arg, **kwargs):
-#         pk = kwargs.get("pk", None)
-#         if not pk:
-#             return Response({"error": "Method PUT not allowed"})
-
-#         try:
-#             instance = Post.objects.get(pk=pk)
-#         except:
-#             return Response({"error": "Object does not exists"})
-        
-#         return Response({'title': instance.title, 
-#                         'author': instance.author, 
-#                         'content': instance.content,
-#                         'time_create': instance.time_create,
-#                         'time_update': instance.time_update,
-#                         'is_published': instance.is_published,
-#                         'cat': str(instance.cat) })
-
-#     def put(self, request, *arg, **kwargs):
-#         pk = kwargs.get("pk", None)
-#         if not pk:
-#             return Response({"error": "Method PUT not allowed"})
-        
-#         try:
-#             instance = Post.objects.get(pk=pk)
-#         except:
-#             return Response({"error": "Object does not exists"})
-
-#         serializer = PostSerializer(data=request.data, instance=instance)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save() 
-        
-#         return Response({'post': serializer.data})
-
-# class PostAPIUViewDestroy(APIView):
-
-#     def get(self, request, *arg, **kwargs):
-#         pk = kwargs.get("pk", None)
-#         if not pk:
-#             return Response({"error": "Method PUT not allowed"})
-
-#         try:
-#             instance = Post.objects.get(pk=pk)
-#         except:
-#             return Response({"error": "Object does not exists"})
-            
-#         return Response({'title': instance.title, 
-#                         'author': instance.author, 
-#                         'content': instance.content,
-#                         'time_create': instance.time_create,
-#                         'time_update': instance.time_update,
-#                         'is_published': instance.is_published,
-#                         'cat': str(instance.cat) })
-
-#     def delete(self, request, *arg, **kwargs):
-#         pk = kwargs.get("pk", None)
-#         if not pk:
-#             return Response({"error": "Method DELETE not allowed"})
-        
-#         try:
-#             instance = Post.objects.get(pk=pk)
-#         except:
-#             return Response({"error": "Object does not exists"})
-        
-#         if instance:
-#             instance.delete()
-#             return Response({"post": "delete post " + str(pk)})
-#         else:
-#             return Response({"error": "Object does not exists"})
