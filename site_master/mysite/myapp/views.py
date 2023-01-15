@@ -8,6 +8,10 @@ from django.contrib.auth import login
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user
 from django.shortcuts import render
+# from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseRedirect
+from django.shortcuts import *
+from django.template import *
 # Create your views here.
 
 from .models import *
@@ -27,7 +31,7 @@ class Index(DataMixin, ListView):
         return dict(list(context.items()) + list(c_def.items()))
 
     # def get_queryset(self):
-    #     return Post.objects.filter(is_published=True).select_related('cat').select_related('user')
+    #     return Post.objects.filter(is_published=True).select_related('user')
 
     def get_queryset(self, **kwargs):
         return Post.objects.filter(is_published=True).select_related(**kwargs)
@@ -55,15 +59,13 @@ class CreateProfilePageView(DataMixin, CreateView):
 class ShowProfilePageView(DataMixin, DetailView):
     model = UserProfile
     template_name = 'mysite/userTemplates/user_profile.html'
+    slug_url_kwarg = 'user_slug'
+
 
     def get_context_data(self, *args, **kwargs):
-
-        context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
-        page_user = get_object_or_404(UserProfile, id=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Профиль пользователя")
-        context['page_user'] = page_user
         return dict(list(context.items()) + list(c_def.items()))
-
 
 class AddPost(LoginRequiredMixin, DataMixin, CreateView):
 
@@ -130,8 +132,9 @@ class RegisterUser(DataMixin, CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
+        userprofile = UserProfile.objects.create(user=user)
+        userprofile.save()
         return redirect('home')
-
 
 class LoginUser(DataMixin, LoginView):
     form_class = LoginUserForm
@@ -147,4 +150,4 @@ class LoginUser(DataMixin, LoginView):
 
 def logout_user(request):
     logout(request)
-    return redirect('login')
+    return redirect('login_user')

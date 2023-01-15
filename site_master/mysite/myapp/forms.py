@@ -17,7 +17,7 @@ class AddPostForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'text-input'}),
             'content': forms.Textarea(attrs={'class': 'post-text-area'}),
-            'author': forms.HiddenInput(attrs={'class': None})
+            'user': forms.HiddenInput(attrs={'class': None})
         }
 
 
