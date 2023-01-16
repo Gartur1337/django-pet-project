@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from myapp.models import Post
+from post.models import Post
 
 
 

@@ -1,5 +1,5 @@
-from myapp.models import *
-
+from post.models import *
+from user.models import *
 
 menu = [{'title': "Добавить статью", 'url_name': 'add_post'},
         {'title': "О Сайте", 'url_name': 'about'},
