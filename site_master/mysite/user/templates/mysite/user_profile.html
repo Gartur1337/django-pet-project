@@ -4,9 +4,6 @@
   <div>
     
       <img src="../../{{ userprofile.profile_pic }}" height=168 width=168><br><br>
-    
-      
-    
       <p><strong>Имя пользователя:</strong> {{ userprofile.user }} </p><br><br>
       <p><strong>О себе:</strong> {{ userprofile.bio }}</p><br><br>
       {% if userprofile.twitter %}
@@ -15,9 +12,18 @@
       {% if userprofile.instagram %}
       <p><strong>Instagram:</strong> {{ userprofile.instagram }}</p><br><br>
       {% endif %}
-      {% if userprofile.vk %}
       <p><strong>Вконтакте:</strong> {{ userprofile.vk }}</p><br><br>
+      {% if request.user.id == userprofile.user_id %}
+      {% for friend in userprofile.friend_list %}
+      <span class="description">
+        <a href="{% url 'friend_list' %}">Друзья пользователя {{ friend }}</a>
+      </span>
+      {% endfor %}
+      {% else %}
+      <span class="description">Друзья пользователя {{ userprofile}} {{ userprofile.friends.count }} </span>
       {% endif %}
+    
+
 
     </div>
 
